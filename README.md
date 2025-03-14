@@ -4,6 +4,7 @@
 
 The Real-Time Financial Assistant Chatbot is an AI-powered chatbot designed to assist users with financial queries related to stock markets, personal finance, investment advice, and cryptocurrency. The chatbot leverages real-time financial data integration and multi-modal context retrieval, allowing users to make informed financial decisions efficiently. This report provides a comprehensive overview of the project's objectives, implementation, tools, and methodologies used.
 
+
 **Objectives**
 
 1.Provide users with real-time financial insights.
@@ -20,11 +21,14 @@ The Real-Time Financial Assistant Chatbot is an AI-powered chatbot designed to a
 
 7.Enhance user decision-making with AI-powered recommendations.
 
+
 **Technologies and Tools Used**
 
 Programming Language: Python
 
+
 Libraries and APIs:
+
 1.phi.agent: Agent-based workflow
 
 2.phi.model.groq: Groq API for financial research
@@ -39,7 +43,9 @@ Libraries and APIs:
 
 7.matplotlib, pandas, numpy: Data processing and visualization
 
+
 Cloud & API Integration:
+
 1.OpenAI API for AI-based responses
 
 2.Phi API for managing workflow automation
