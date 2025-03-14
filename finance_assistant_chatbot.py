@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Import necessary libraries for phidata
+# Import necessary libraries
 from phi.agent import Agent
 from phi.model.groq import Groq
 from phi.model.openai import OpenAIChat
@@ -27,7 +27,6 @@ import phi.api
 from phi.workplace import Workplace         
 from phi.playground import Playground  
 
-# Create necessary directories first to avoid file operation errors
 os.makedirs("knowledge", exist_ok=True)
 os.makedirs("storage", exist_ok=True)
 os.makedirs("assistant_storage", exist_ok=True)
@@ -44,7 +43,7 @@ alphavantage_api_key = os.getenv("ALPHAVANTAGE_API_KEY")
 if phi_api_key:
     phi.api.key = phi_api_key
 
-# Validate API keys - modified to handle missing keys more gracefully
+# Validate API keys 
 missing_keys = []
 if not phi_api_key:
     missing_keys.append("PHI_API_KEY")
@@ -57,11 +56,7 @@ if missing_keys:
     print(f"Warning: The following API keys are missing: {', '.join(missing_keys)}")
     print("Some functionality may not work correctly.")
 
-# ---------------------------
-# Custom Tools Implementation
-# ---------------------------
 
-# Custom Image Analysis Tool (uses multi-modal capability)
 class ImageAnalysisTool(Tool):
     def __init__(self):
         super().__init__(
@@ -81,19 +76,19 @@ class ImageAnalysisTool(Tool):
             A string containing the analysis of the image
         """
         try:
-            # Check if OpenAI API key is available
+         
             if not openai_api_key:
                 return "Error: OpenAI API key is missing. Cannot analyze image."
                 
-            # Verify the image file exists
+       
             if not os.path.exists(image_path):
                 return f"Error: Image file not found at path: {image_path}"
                 
-            # Read image file and encode as base64
+           
             with open(image_path, "rb") as image_file:
                 image_data = base64.b64encode(image_file.read()).decode("utf-8")
             
-            # Use OpenAI's vision capabilities (GPT-4o supports vision)
+        
             client = openai_module.OpenAI(api_key=openai_api_key)
             response = client.chat.completions.create(
                 model="gpt-4o",
@@ -143,7 +138,7 @@ class DataVisualizationTool(Tool):
                 plt.pie(list(data.values()), labels=list(data.keys()), autopct='%1.1f%%')
             
             plt.title(title)
-            if chart_type != "pie":  # Pie charts have labels instead of a legend
+            if chart_type != "pie": 
                 plt.legend()
             
             # Save visualization
@@ -177,7 +172,7 @@ class SentimentAnalysisTool(Tool):
             Dictionary with sentiment analysis results
         """
         try:
-            # Check if OpenAI API key is available
+          
             if not openai_api_key:
                 return {"error": "OpenAI API key is missing. Cannot analyze sentiment."}
                 
@@ -192,7 +187,7 @@ class SentimentAnalysisTool(Tool):
             
             analysis = response.choices[0].message.content
             
-            # Simple parsing (customize this as needed)
+        
             sentiment_score = 0.0
             positive_points = []
             negative_points = []
@@ -246,7 +241,7 @@ class MarketAlertTool(Tool):
             Confirmation message for the alert
         """
         try:
-            # Ensure alerts directory exists
+      
             os.makedirs("alerts", exist_ok=True)
             alert_id = f"alert_{symbol}_{condition}_{threshold}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
             alert_file = os.path.join("alerts", "alerts.txt")
@@ -256,12 +251,11 @@ class MarketAlertTool(Tool):
         except Exception as e:
             return f"Error creating alert: {str(e)}"
 
-# Create knowledge base documents function
+
 def create_sample_knowledge_docs():
     """Create sample knowledge base documents if they don't exist."""
     os.makedirs("knowledge", exist_ok=True)
     
-    # Investment basics document
     with open("knowledge/investment_basics.md", "w") as f:
         f.write("""# Investment Basics
         
@@ -339,14 +333,9 @@ Understand the local tax regulations and consult a tax professional for personal
 - Diversified Investment Portfolios
         """)
 
-# ---------------------------
-# Agent Definitions
-# ---------------------------
 
-# Create sample knowledge documents first
 create_sample_knowledge_docs()
 
-# Define agents only if necessary API keys are available
 agents_available = True
 
 if not groq_api_key:
@@ -475,11 +464,6 @@ if agents_available:
         markdown=True,
     )
 
-    # ---------------------------
-    # Knowledge Base and Assistant Setup
-    # ---------------------------
-
-    # Setup knowledge base
     financial_knowledge = Knowledge(
         documents=[
             Document(uri="knowledge/investment_basics.md"),
@@ -491,7 +475,7 @@ if agents_available:
         storage_dir="./storage"
     )
 
-    # Enhanced Assistant with integrated knowledge base and persistent storage
+
     enhanced_assistant = Assistant(
         name="Financial Intelligence Suite",
         agent=financial_assistant,
@@ -500,14 +484,14 @@ if agents_available:
         description="Comprehensive financial intelligence system with real-time data analysis, visualization, and personalized advice"
     )
 
-    # Workplace definition for the complete ecosystem
+    
     financial_workplace = Workplace(
         name="Financial Intelligence Workplace",
         assistants=[enhanced_assistant],
         description="Complete financial intelligence ecosystem for real-time analysis and advice"
     )
 
-    # Playground for interactive usage
+   
     financial_playground = Playground(
         agents=[web_search_agent, finance_agent, multimodal_agent, advisor_agent, financial_assistant],
         assistants=[enhanced_assistant]
@@ -515,29 +499,25 @@ if agents_available:
     
 else:
     print("Warning: Required API keys are missing. Creating placeholder objects.")
-    # Create placeholder objects if API keys are missing
+
     financial_playground = None
     enhanced_assistant = None
     financial_workplace = None
 
-# ---------------------------
-# Main Entrypoint
-# ---------------------------
+
 if __name__ == "__main__":
     print("Setting up Financial Assistant components...")
     
-    # Create the sample knowledge base documents (if not already present)
     create_sample_knowledge_docs()
     print("Sample knowledge base documents created.")     
     
-    # Show what can be done with the setup
     if agents_available:
         print("\nFinancial Assistant setup complete! You can now:")
         print("1. Run the playground app for interactive testing")
         print("2. Use the enhanced_assistant directly in your code")  
         print("3. Access individual agents for specific financial tasks")
         
-        # Print examples for running the system
+    
         print("\nExample code to run the playground app:")
         print("    import uvicorn")
         print("    uvicorn.run(financial_playground, host='0.0.0.0', port=8000)")
@@ -555,6 +535,4 @@ if __name__ == "__main__":
         if not groq_api_key:
             print("- GROQ_API_KEY")
     
-    print("\nFinancial Assistant setup process completed!")   
-
-
+    print("\nFinancial Assistant setup process completed!")     
