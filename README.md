@@ -1,6 +1,6 @@
 # XNL-21BCT0067-LLM-4
 
-**Description **
+**Description**
 
 The Real-Time Financial Assistant Chatbot is an AI-powered chatbot designed to assist users with financial queries related to stock markets, personal finance, investment advice, and cryptocurrency. The chatbot leverages real-time financial data integration and multi-modal context retrieval, allowing users to make informed financial decisions efficiently. This report provides a comprehensive overview of the project's objectives, implementation, tools, and methodologies used.
 
